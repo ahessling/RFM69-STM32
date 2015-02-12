@@ -22,3 +22,7 @@ derived from the `SPIBase` (see `spibase.hpp`) class.
 Examples
 --------
 TODO
+
+Power settings
+--------------
+The power settings of +20 dBm RFM69HW modules are a bit confusing. Look [here](http://blog.andrehessling.de/2015/02/07/figuring-out-the-power-level-settings-of-hoperfs-rfm69-hwhcw-modules/) for some explanations and experiments regarding power consumption, power output and RSSI values at the receiver.
