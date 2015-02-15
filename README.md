@@ -19,9 +19,49 @@ Use the SysTick timer (for example) with a 1 ms resolution which is present on a
 If you want to port this library to other devices, you have to provide an SPI instance
 derived from the `SPIBase` (see `spibase.hpp`) class.
 
-Examples
+Example
 --------
-TODO
+```cpp
+...
+// setup SPI
+SPI spiRF(SPI1);
+spiRF.setPrescaler(SPI_BaudRatePrescaler_2);
+spiRF.init();
+
+// setup RFM69 and optional reset
+RFM69 rfm69(&spiRF, GPIOA, GPIO_Pin_1, true); // false = RFM69W, true = RFM69HW
+rfm69.setResetPin(GPIOA, GPIO_Pin_2);
+rfm69.reset();
+
+// init RF module and put it to sleep
+rfm69.init();
+rfm69.sleep();
+
+// set output power
+rfm69.setPowerDBm(10); // +10 dBm
+
+// enable CSMA/CA algorithm
+rfm69.setCSMA(true);
+
+...
+
+// send a packet and let RF module sleep
+char testdata[] = {'H', 'e', 'l', 'l', 'o'};
+rfm69.send(testdata, sizeof(testdata));
+rfm69.sleep();
+
+...
+
+// check if a packet has been received
+char rx[64];
+int bytesReceived = rfm69.receive(rx, sizeof(rx));
+
+if (bytesReceived > 0)
+{
+  printf("%d bytes received.", bytesReceived);
+}
+
+```
 
 Power settings
 --------------
