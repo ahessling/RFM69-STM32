@@ -15,6 +15,42 @@ Usage
 -----
 You have to provide your own functions for `delay_ms` and `mstimer_get`.
 Use the SysTick timer (for example) with a 1 ms resolution which is present on all ARM controllers.
+This is an example working on STM32 controllers:
+
+```cpp
+volatile uint32_t uptime_ms = 0; ///< Uptime in ms
+
+extern "C" void SysTick_Handler()
+{
+  uptime_ms++;
+}
+
+/** Wait for X milliseconds.
+ *
+ * @param ms Milliseconds
+ */
+void delay_ms(unsigned ms)
+{
+  uint32_t start = uptime_ms;
+  while (uptime_ms - start < ms);
+}
+
+/** Initialize the millisecond timer. */
+void mstimer_init(void)
+{
+  SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK);
+  SysTick_Config(SystemCoreClock / 1000);
+}
+
+/** Return the number of milliseconds since start.
+ *
+ * @return Milliseconds
+ */
+uint32_t mstimer_get(void)
+{
+  return uptime_ms;
+}
+```
 
 If you want to port this library to other devices, you have to provide an SPI instance
 derived from the `SPIBase` (see `spibase.hpp`) class.
@@ -23,6 +59,10 @@ Example
 --------
 ```cpp
 ...
+
+// initialize millisecond timer (based on the delay code above)
+mstimer_init();
+  
 // setup SPI
 SPI spiRF(SPI1);
 spiRF.setPrescaler(SPI_BaudRatePrescaler_2);
