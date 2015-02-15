@@ -11,6 +11,8 @@ Support is also available for the +20 dBm high power modules called RFM69HW/RFM6
 A CSMA/CA (carrier sense multiple access) algorithm can be enabled to avoid collisions.
 If you want to enable CSMA, you should initialize the random number generator before.
 
+This library is based on polled operations although the RFM69 modules support interrupts, so you do not need additional pins except for the SPI data signals. This approach should be fast enough for nearly every application and makes the code and program flow easier to follow.
+
 Usage
 -----
 You have to provide your own functions for `delay_ms` and `mstimer_get`.
