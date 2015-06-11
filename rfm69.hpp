@@ -155,6 +155,8 @@ public:
   void dumpRegisters();
 
   void setPASettings(uint8_t forcePA = 0);
+  
+  bool setAESEncryption(const void* aesKey, unsigned int keyLength);
 
 private:
   uint8_t readRegister(uint8_t reg);

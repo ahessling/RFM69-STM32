@@ -627,6 +627,51 @@ int RFM69::_receive(char* data, unsigned int dataLength)
 }
 
 /**
+ * Enable and set or disable AES hardware encryption/decryption.
+ *
+ * The AES encryption module will be disabled if an invalid key or key length
+ * is passed to this function (aesKey = 0 or keyLength != 16).
+ * Otherwise encryption will be enabled.
+ *
+ * The key is stored as MSB first in the RF module.
+ *
+ * @param aesKey Pointer to a buffer with the 16 byte AES key
+ * @param keyLength Number of bytes in buffer aesKey; must be 16 bytes
+ * @return State of encryption module (false = disabled; true = enabled)
+ */
+bool RFM69::setAESEncryption(const void* aesKey, unsigned int keyLength)
+{
+  bool enable = false;
+
+  // check if encryption shall be enabled or disabled
+  if ((0 != aesKey) && (16 == keyLength))
+    enable = true;
+
+  // switch to standby
+  setMode(RFM69_MODE_STANDBY);
+
+  if (true == enable)
+  {
+    // transfer AES key to AES key register
+    chipSelect();
+
+    // address first AES MSB register
+    _spi->transfer(0x3E | 0x80);
+
+    // transfer key (0x3E..0x4D)
+    for (unsigned int i = 0; i < keyLength; i++)
+      _spi->transfer(((uint8_t*)aesKey)[i]);
+
+    chipUnselect();
+  }
+
+  // set/reset AesOn Bit in packet config
+  writeRegister(0x3D, (readRegister(0x3D) & 0xFE) | (enable ? 1 : 0));
+
+  return enable;
+}
+
+/**
  * Wait until packet has been sent over the air or timeout.
  */
 void RFM69::waitForPacketSent()
