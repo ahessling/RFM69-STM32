@@ -13,4 +13,7 @@
 
 #include "stm32l1xx.h"
 
+// Include this for STM32F0 devices
+//#include "stm32f0xx.h"
+
 #endif /* HW_CONFIG_H_ */
