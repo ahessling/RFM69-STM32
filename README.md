@@ -55,7 +55,7 @@ uint32_t mstimer_get(void)
 ```
 
 If you want to port this library to other devices, you have to provide an SPI instance
-derived from the `SPIBase` (see `spibase.hpp`) class.
+derived from the `SPIBase` (see `spibase.hpp`) class. As of now, classes for STM32L1x and STM32F0x devices are included in this library as examples.
 
 Example
 --------
